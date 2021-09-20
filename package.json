@@ -1,0 +1,23 @@
+{
+  "name": "u-cloud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amzoobalance/u-cloud.git"
+  },
+  "author": "Andrei Orlov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amzoobalance/u-cloud/issues"
+  },
+  "homepage": "https://github.com/Amzoobalance/u-cloud#readme",
+  "dependencies": {
+    "ramda": "^0.27.1"
+  }
+}
