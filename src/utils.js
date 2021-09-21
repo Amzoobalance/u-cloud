@@ -1,15 +1,24 @@
-const pipe = (...functions) => (firstValue) => {
+const pipe =
+  (...functions) =>
+  (firstValue) => {
     let result = firstValue;
     for (let i = 0; i < functions.length; i++) {
-        result = functions[i](result);
+      result = functions[i](result);
     }
-    return result
-}
+    return result;
+  };
 
-const divide = (divideBy) => (whatToDivide) => whatToDivide / divideBy;
+const divideBy = (divideBy) => (whatToDivide) => whatToDivide / divideBy;
 
+const callbackErrorHandler = (error) => {
+  if (error !== null) {
+    console.log(error.message);
+    process.exit(1);
+  }
+};
 
 module.exports = {
-    pipe: pipe,
-    divideBy: divide,
-}
+  pipe,
+  divideBy,
+  callbackErrorHandler,
+};

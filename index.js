@@ -1,24 +1,22 @@
 // TODO: a tool for copying files
-const { copyFileSync, statSync } = require('fs');
-const { prop } = require('ramda');
-const { pipe, divideBy } = require('./src/utils');
+const { copyFile, statSync, stat } = require("fs");
+const { prop } = require("ramda");
+const { pipe, divideBy, callbackErrorHandler } = require("./src/utils");
 
 const [sourseFilePath, outPuthFilePath] = process.argv.slice(2);
 
-copyFileSync(sourseFilePath, outPuthFilePath);
+copyFile(sourseFilePath, outPuthFilePath, callbackErrorHandler);
 
-if (!process.argv.includes('--verbose')) {
-    process.exit(0);
+if (!process.argv.includes("--verbose")) {
+  process.exit(0);
 }
 
-const getFileSize = pipe(
-    statSync,
-    prop('size'),
-    divideBy(1024),
-    Math.round,
+stat(sourseFilePath, (error, stat) => {
+  callbackErrorHandler(error);
 
-);
+  const getFileSize = pipe(prop("size"), divideBy(1024), Math.round);
 
-console.log(
-    `Copied ${getFileSize(sourseFilePath)}KB from ${sourseFilePath} to ${outPuthFilePath}`
-);
+  console.log(
+    `Copied ${getFileSize(stat)}KB from ${sourseFilePath} to ${outPuthFilePath}`
+  );
+});
