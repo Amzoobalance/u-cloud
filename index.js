@@ -3,8 +3,13 @@ const { copyFileSync, statSync } = require('fs');
 const { prop } = require('ramda');
 const { pipe, divideBy } = require('./src/utils');
 
-const sourseFilePath = './my.html';
-const outPuthFilePath = './выхлоп.html';
+const [sourseFilePath, outPuthFilePath] = process.argv.slice(2);
+
+copyFileSync(sourseFilePath, outPuthFilePath);
+
+if (!process.argv.includes('--verbose')) {
+    process.exit(0);
+}
 
 const getFileSize = pipe(
     statSync,
@@ -12,9 +17,7 @@ const getFileSize = pipe(
     divideBy(1024),
     Math.round,
 
-)
-
-copyFileSync(sourseFilePath, outPuthFilePath);
+);
 
 console.log(
     `Copied ${getFileSize(sourseFilePath)}KB from ${sourseFilePath} to ${outPuthFilePath}`
