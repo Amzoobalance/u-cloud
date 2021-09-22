@@ -1,22 +1,24 @@
 // TODO: a tool for copying files
-const { copyFile, stat } = require("fs");
-const { prop } = require("ramda");
-const { pipe, divideBy, callbackErrorHandler } = require("./src/utils");
-
+const { createReadStream, createWriteStream, stat } = require("fs");
+const { SingleBar, Presets } = require("cli-progress");
+const bar = new SingleBar({}, Presets.shades_classic);
 const [sourseFilePath, outPuthFilePath] = process.argv.slice(2);
-
-copyFile(sourseFilePath, outPuthFilePath, callbackErrorHandler);
-
-if (!process.argv.includes("--verbose")) {
-  process.exit(0);
-}
+const readStream = createReadStream(sourseFilePath);
+const writeStream = createWriteStream(outPuthFilePath);
 
 stat(sourseFilePath, (error, stat) => {
-  callbackErrorHandler(error);
+  if (error !== null) {
+    console.log(error.message);
+    process.exit(1);
+  }
 
-  const getFileSize = pipe(prop("size"), divideBy(1024), Math.round);
+  bar.start(stat.size, 0);
 
-  console.log(
-    `Copied ${getFileSize(stat)}KB from ${sourseFilePath} to ${outPuthFilePath}`
-  );
+  readStream.on("data", (chunk) => {
+    writeStream.write(chunk);
+    bar.increment(chunk.length);
+  });
+  readStream.on("close", () => {
+    bar.stop();
+  });
 });
