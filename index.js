@@ -1,8 +1,11 @@
 // TODO: a tool for copying files
 const { createReadStream, createWriteStream, stat } = require("fs");
 const { SingleBar, Presets } = require("cli-progress");
+
 const bar = new SingleBar({}, Presets.shades_classic);
+
 const [sourseFilePath, outPuthFilePath] = process.argv.slice(2);
+
 const readStream = createReadStream(sourseFilePath);
 const writeStream = createWriteStream(outPuthFilePath);
 
