@@ -1,5 +1,5 @@
 // TODO: a tool for copying files
-const { copyFile, statSync, stat } = require("fs");
+const { copyFile, stat } = require("fs");
 const { prop } = require("ramda");
 const { pipe, divideBy, callbackErrorHandler } = require("./src/utils");
 
