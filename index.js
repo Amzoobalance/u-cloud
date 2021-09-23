@@ -1,6 +1,7 @@
 // TODO: a tool for copying files
 const { createReadStream, createWriteStream, stat } = require("fs");
 const { SingleBar, Presets } = require("cli-progress");
+const { createGzip } = require("zlib");
 
 const bar = new SingleBar({}, Presets.shades_classic);
 
@@ -8,6 +9,7 @@ const [sourseFilePath, outPuthFilePath] = process.argv.slice(2);
 
 const readStream = createReadStream(sourseFilePath);
 const writeStream = createWriteStream(outPuthFilePath);
+const gzipStream = createGzip();
 
 stat(sourseFilePath, (error, stat) => {
   if (error !== null) {
@@ -17,11 +19,14 @@ stat(sourseFilePath, (error, stat) => {
 
   bar.start(stat.size, 0);
 
-  readStream.on("data", (chunk) => {
-    writeStream.write(chunk);
-    bar.increment(chunk.length);
-  });
-  readStream.on("close", () => {
-    bar.stop();
-  });
+  readStream
+    .pipe(
+      gzipStream.on("data", (chunk) => {
+        writeStream.write(chunk);
+        bar.increment(chunk.length);
+      })
+    )
+    .on("close", () => {
+      bar.stop();
+    });
 });
