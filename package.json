@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node .",
-    "serve": "node server.js"
+    "serve": "cross-env PORT=8000 node server.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,8 @@
   "dependencies": {
     "cli-progress": "^3.9.1",
     "ramda": "^0.27.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

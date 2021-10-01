@@ -1,13 +1,23 @@
 const { createServer } = require("http");
-const { createReadStream } = require("fs");
+const { createWriteStream } = require("fs");
 
-const indexHtmlStream = createReadStream("./index.html");
+const { PORT } = process.env;
 
-const server = createServer();
+const server = createServer((req, res) => {
+  if (req.method !== "POST") {
+    res.statusCode = 404;
+    return res.end();
+  }
+  const outputFilePath = req.headers["file-path"];
 
-server.on("request", (request, response) => {
-  indexHtmlStream.pipe(response);
+  const writeStream = createWriteStream(outputFilePath);
+
+  req.pipe(writeStream).on("close", () => {
+    res.write(`File saved as ${outputFilePath}`);
+    res.end();
+  });
 });
 
-server.listen(8000);
-console.log("Server running on port 8000");
+server.listen(PORT);
+
+console.log(`Server running on port ${PORT}`);
