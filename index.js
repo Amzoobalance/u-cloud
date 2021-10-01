@@ -1,4 +1,3 @@
-// TODO: a tool for copying files
 const { createReadStream, createWriteStream, stat } = require("fs");
 const { SingleBar, Presets } = require("cli-progress");
 const { createGzip } = require("zlib");
