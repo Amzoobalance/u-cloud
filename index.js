@@ -1,65 +1,22 @@
 const { createReadStream, createWriteStream, stat } = require("fs");
-const { SingleBar, Presets } = require("cli-progress");
 const { createGzip } = require("zlib");
-const { request } = require("http");
-const bar = new SingleBar({}, Presets.shades_classic);
+const { createSendFileStream } = require("./src/send-file");
+const { createProgressStream } = require("./src/progress-bar");
 
-const [sourseFilePath, outputFilePath] = process.argv.slice(2);
+const [SOURSE_FILE_PATH, OUTPUT_FILE_PATH] = process.argv.slice(2);
 
-const readStream = createReadStream(sourseFilePath);
-
-const gzipStream = createGzip();
-
-stat(sourseFilePath, (error, stat) => {
-  if (error !== null) {
-    console.log(error.message);
+stat(SOURSE_FILE_PATH, (e, { size }) => {
+  if (e !== null) {
+    console.log(e.message);
     process.exit(1);
   }
 
-  bar.start(stat.size, 0);
+  const readStream = createReadStream(SOURSE_FILE_PATH);
+  const gzipStream = createGzip();
+  const progressStream = createProgressStream(size);
+  const writeStream = process.argv.includes("--remote")
+    ? createSendFileStream(OUTPUT_FILE_PATH)
+    : createWriteStream(OUTPUT_FILE_PATH);
 
-  if (process.argv.includes("--remote")) {
-    const requestOptions = {
-      method: "POST",
-      headers: { "file-path": outputFilePath },
-    };
-    const req = request("http://localhost:8000/", requestOptions, (res) => {
-      let responseBody = "";
-      res
-        .on("data", (chunk) => {
-          responseBody += chunk.toString();
-        })
-        .on("close", () => {
-          console.log(responseBody);
-        });
-    });
-
-    readStream.pipe(
-      gzipStream
-        .on("data", (chunk) => {
-          req.write(chunk);
-          bar.increment(chunk.length);
-        })
-        .on("close", () => {
-          req.end();
-
-          bar.update(stat.size);
-          bar.stop();
-        })
-    );
-  } else {
-    const writeStream = createWriteStream(outputFilePath);
-
-    readStream
-      .pipe(
-        gzipStream.on("data", (chunk) => {
-          writeStream.write(chunk);
-          bar.increment(chunk.length);
-        })
-      )
-      .on("close", () => {
-        bar.update(stat.size);
-        bar.stop();
-      });
-  }
+  readStream.pipe(progressStream).pipe(gzipStream).pipe(writeStream);
 });
