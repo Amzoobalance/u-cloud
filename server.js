@@ -1,37 +1,13 @@
 const { createServer } = require("http");
-const { join } = require("path");
-const { createWriteStream, createReadStream } = require("fs");
+const { Router } = require("./src/router");
 const { PORT } = process.env;
+const { uploadFile } = require("./src/routes/upload-file");
+const { getFile } = require("./src/routes/get-file");
+const { defaultHandler } = require("./src/routes/default-handler");
 
-const server = createServer((req, res) => {
-  if (req.method === "GET") {
-    const filePath = join(__dirname, req.url);
+const router = Router().all(defaultHandler).get(getFile).post(uploadFile);
 
-    res.setHeader("content-encoding", "gzip");
-    res.setHeader("content-type", "text/html");
-
-    const readStream = createReadStream(filePath);
-
-    readStream
-      .on("error", () => {
-        res.statusCode = 404;
-        res.end();
-      })
-      .pipe(res);
-  } else if (req.method === "POST") {
-    const outputFilePath = req.headers["file-path"];
-
-    const writeStream = createWriteStream(outputFilePath);
-
-    req.pipe(writeStream).on("close", () => {
-      res.write(`File saved as ${outputFilePath}`);
-      res.end();
-    });
-  } else {
-    res.statusCode = 404;
-    res.end();
-  }
-});
+const server = createServer(router.serve);
 
 server.listen(PORT);
 
