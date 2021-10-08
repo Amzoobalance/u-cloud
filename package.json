@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node .",
-    "serve": "cross-env PORT=8000 nodemon node server.js"
+    "serve": "cross-env PORT=8000 nodemon node server.js",
+    "format": "prettier -w ./**/*.js",
+    "format:check": "prettier -l ./**/*.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1"
   }
 }
