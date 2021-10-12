@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node .",
-    "serve": "cross-env PORT=8000 nodemon node server.js",
-    "format": "prettier -w ./src",
-    "format:check": "prettier -l ./src",
-    "lint": "eslint ./src"
+    "start": "node client/index.js",
+    "serve": "cross-env PORT=8000 nodemon node server/index.js",
+    "format": "prettier -w ./client ./server",
+    "format:check": "prettier -l ./client ./server",
+    "lint": "eslint ./client ./server"
   },
   "repository": {
     "type": "git",
@@ -21,10 +21,6 @@
     "url": "https://github.com/Amzoobalance/u-cloud/issues"
   },
   "homepage": "https://github.com/Amzoobalance/u-cloud#readme",
-  "dependencies": {
-    "cli-progress": "^3.9.1",
-    "ramda": "^0.27.1"
-  },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
