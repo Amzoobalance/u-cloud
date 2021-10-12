@@ -1,7 +1,9 @@
 const { createWriteStream } = require("fs")
+const { join } = require("path")
 
 const uploadFile = (req, res) => {
-	const outputFilePath = req.headers["file-path"]
+	const outputFilePath = join(__dirname, "../../../files", req.headers["file-path"])
+
 	const writeStream = createWriteStream(outputFilePath)
 
 	req
