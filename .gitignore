@@ -4,3 +4,4 @@ desktop.ini
 node_modules
 files/*
 !files/.gitkeep
+.env
